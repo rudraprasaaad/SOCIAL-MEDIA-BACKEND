@@ -10,10 +10,11 @@ export const register = async (req, res) => {
       password: hashedPassword,
     });
 
+    const { password, ...data } = newUser._doc;
     await newUser.save();
 
     res.status(200).json({
-      newUser,
+      data,
       message: "User has been successfully registered",
     });
   } catch (err) {
