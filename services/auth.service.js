@@ -1,5 +1,7 @@
+import { permittedCrossDomainPolicies } from "helmet";
 import UserModel from "../models/user.model.js";
 import bcrypt from "bcrypt";
+import userModel from "../models/user.model.js";
 
 export const registerUser = async (body) => {
   const hashedPassword = bcrypt.hashSync(body.password, 10);
@@ -10,4 +12,15 @@ export const registerUser = async (body) => {
   });
 
   await newUser.save();
+  return newUser;
+};
+
+export const loginUser = async (body) => {
+  const user = await UserModel.findOne({ email: body.email });
+  !user && res.status(404).json("User not found");
+
+  const passwordCheck = await bcrypt.compare(body.password, user.password);
+  !passwordCheck && res.status(404).json("Wrong password");
+
+  return user;
 };
